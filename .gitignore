@@ -1,0 +1,44 @@
+# ===== IDE / editor =====
+.idea/
+*.iml
+.vscode/
+
+# ===== Operating system =====
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ===== Local environment / secrets =====
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# ===== Logs =====
+*.log
+
+# ===== Frontend: Node / Vite =====
+node_modules/
+dist/
+.vite/
+coverage/
+
+# ===== Backend: Java / Gradle =====
+.gradle/
+build/
+out/
+*.class
+
+# ===== AI service: Python =====
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+/AGENTS.md
+/.agents/
