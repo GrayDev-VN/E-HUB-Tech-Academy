@@ -1,0 +1,86 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ehub-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    ports:
+      - "${POSTGRES_PORT}:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+    networks:
+      - ehub-network
+
+  minio:
+    image: minio/minio:latest
+    container_name: ehub-minio
+    restart: unless-stopped
+
+    command: server /data --console-address ":9001"
+
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+
+    ports:
+      - "${MINIO_API_PORT}:9000"
+      - "${MINIO_CONSOLE_PORT}:9001"
+
+    volumes:
+      - minio_data:/data
+
+    networks:
+      - ehub-network
+
+  minio-init:
+    image: cgr.dev/chainguard/minio-client:latest-dev
+    container_name: ehub-minio-init
+    restart: "no"
+
+    depends_on:
+      - minio
+
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_BUCKET: ${MINIO_BUCKET}
+
+    entrypoint: >
+      /bin/sh -c "
+      until /usr/bin/mc alias set ehub http://minio:9000
+      \"$$MINIO_ROOT_USER\"
+      \"$$MINIO_ROOT_PASSWORD\";
+      do
+        echo 'Waiting for MinIO...';
+        sleep 2;
+      done;
+      /usr/bin/mc mb --ignore-existing
+      ehub/\"$$MINIO_BUCKET\";
+      /usr/bin/mc anonymous set none
+      ehub/\"$$MINIO_BUCKET\";
+      echo 'MinIO bucket is ready.';
+      "
+
+    networks:
+      - ehub-network
+
+volumes:
+  postgres_data:
+  minio_data:
+
+networks:
+  ehub-network:
+    driver: bridge
