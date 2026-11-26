@@ -8,4 +8,10 @@
 5. docker-compose logs minio-int -> kiểm tra bucket -> thấy minio bucket is ready
 
 # Một số lệnh quản lý cần nhớ
+1. docker-compose down -> dừng container nhưng vẫn giữ dữ liệu
+2. docker-compose down -v -> dừng container và xóa dữ liệu
+3. docker-compose restart -> khởi động lại
+4. docker-compose logs -f postgres -> chỉ xem logs của postgres
+5. docker exec -it ehub-postgres psql -U ehub -d ehub -> mở shell bên trong postgres
+
 
