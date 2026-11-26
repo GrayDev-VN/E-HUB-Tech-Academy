@@ -1,0 +1,11 @@
+# Một số lệnh kiểm tra trước khi chạy
+
+Đứng trong thư mục ehub, chạy:
+1. docker-compose config -> nếu yaml hợp lệ và biến .env được đọc đúng thì docker sẽ in ra cấu hình đã render
+2. docker-compose up -d
+3. docker-compose ps -> kiểm tra container
+4. docker-compose logs -f -> xem log
+5. docker-compose logs minio-int -> kiểm tra bucket -> thấy minio bucket is ready
+
+# Một số lệnh quản lý cần nhớ
+
